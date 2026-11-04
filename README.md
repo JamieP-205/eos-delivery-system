@@ -1,5 +1,7 @@
 # EOS delivery and quotation system
 
+[Portfolio case study](https://jamieparr.dev/projects/eos-delivery-system/)
+
 A C# Windows Forms app for delivery quotes and invoices, based on my EOS coursework at SRC Newry. Enter the customer and package details, calculate the price, then save or print the invoice.
 
 ![EOS application](docs/application.png)
