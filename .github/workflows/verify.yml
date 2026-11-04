@@ -1,0 +1,19 @@
+name: Verify EOS
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet build -c Release
+      - name: Verify calculations and forms
+        shell: pwsh
+        run: |
+          $result = Start-Process .\bin\Release\net10.0-windows\EosDelivery.exe -ArgumentList '--verify','artifacts' -WindowStyle Hidden -Wait -PassThru
+          if ($result.ExitCode -ne 0) { Get-Content .\artifacts\verification-error.txt; exit 1 }
+          Get-Content .\artifacts\verification.json

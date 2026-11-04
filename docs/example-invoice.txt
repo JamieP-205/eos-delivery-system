@@ -1,0 +1,36 @@
+EOS INVOICE (DEMO)
+Currency selection changes the symbol only.
+Extra shipping fees are entered manually.
+
+SHIPPING DATES
+Dispatched: 04/11/2026   Expected: 18/11/2026
+Duration: 14 day(s)   Band: 5-7 day delivery
+Actual duration exceeds the 5-7 day band.
+Future dispatch options: 11/11/2026, 18/11/2026, 25/11/2026
+
+CUSTOMER
+Mr John A. Doe
+01234567890 | john.doe@example.com | Born 01/01/1990
+Driver: Mr Jane B. Smith
+09876543210 | jane.smith@example.com
+
+DELIVERY
+From England to Ireland
+123 Main St, Apt 4
+Dublin, Dublin, D02 XY12
+2 × Small; 10 × 20 × 30 cm; 20 kg
+Insurance selection: 1st Class (recorded only)
+Special request: Handle with care
+
+COST BREAKDOWN
+Normal: £5.00
+Electronic: £10.00
+Liquids: £25.00
+Expensive: £35.00
+Package size: Small: £5.00
+2 packages × 5.00: £10.00
+Additional shipping charge (entered): £5.00
+Subtotal: £95.00
+VAT (demo 20%): £19.00
+Discount: −£22.80
+TOTAL: £91.20

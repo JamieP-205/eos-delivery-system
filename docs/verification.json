@@ -1,0 +1,29 @@
+{
+  "passed": 24,
+  "checks": [
+    "Category, size, package and shipping charges reconcile with VAT and discount",
+    "Unknown discount is not applied",
+    "Discount normalises whitespace and case",
+    "Signed-for charge is applied once",
+    "Overweight package rejected",
+    "100 kg boundary accepted",
+    "Weight limit applies after unit conversion",
+    "Package count boundaries enforced",
+    "15 package boundary accepted",
+    "Reversed dates rejected",
+    "Under-18 customer rejected",
+    "18th birthday accepted",
+    "Invalid email rejected",
+    "Currency changes symbol only",
+    "Two-day delivery boundary",
+    "Five-day delivery boundary",
+    "Login is locked for 30 seconds",
+    "Login unlocks after interval",
+    "Valid form generates invoice",
+    "Clear removes entries and invoice",
+    "Restore recovers entries and invoice",
+    "Editing invalidates stale invoice",
+    "Package controls remain visible without overlapping category panel",
+    "Package controls remain unclipped in smaller window"
+  ]
+}
