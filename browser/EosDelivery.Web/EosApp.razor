@@ -1,0 +1,206 @@
+@inject IJSRuntime JS
+
+<header class="site-header">
+    <p class="badge-browser">Browser version</p>
+    <p>
+        This page runs the EOS app's own calculation and validation code (<code>Quote.cs</code>), compiled to
+        WebAssembly, with a browser form in place of the Windows one. Nothing you enter leaves this page.
+        <a href="https://github.com/JamieP-205/eos-delivery-system/releases/latest">Download the Windows app</a> ·
+        <a href="https://github.com/JamieP-205/eos-delivery-system">Source code</a>
+    </p>
+</header>
+
+@if (!signedIn)
+{
+    <main id="main" class="login">
+        <h1>EOS Login</h1>
+        <p>Coursework demo</p>
+        <p class="hint">Demo login: <strong>JamieP</strong> / <strong>password123</strong>. Three failed attempts pause sign-in for 30 seconds.</p>
+        <form @onsubmit="SignIn" @onsubmit:preventDefault>
+            <label>Username <input @bind="username" autocomplete="username" /></label>
+            <label>Password <input @bind="password" type="@(showPassword ? "text" : "password")" autocomplete="current-password" /></label>
+            <label class="check"><input type="checkbox" @bind="showPassword" /> Show password</label>
+            <div class="actions">
+                <button type="submit" class="red">Login</button>
+                <button type="button" class="cyan" @onclick="FillDemoLogin">Fill demo login</button>
+            </div>
+            <p class="error" role="alert">@loginMessage</p>
+        </form>
+    </main>
+}
+else
+{
+    <main id="main" class="form">
+        <h1 class="visually-hidden">EOS Delivery System</h1>
+        <div class="columns">
+            <div class="stack">
+                <fieldset>
+                    <legend>Package Details</legend>
+                    <div class="categories">
+                        @foreach (var name in Quote.CategoryPrices.Keys)
+                        {
+                            <label class="check"><input type="checkbox" checked="@m.Categories.Contains(name)" @onchange="e => ToggleCategory(name, e)" /> @name</label>
+                        }
+                    </div>
+                    <div class="grid four">
+                        <label>Length (cm) <input type="number" min="0" max="10000" step="0.01" @bind="m.Length" @bind:after="Changed" /></label>
+                        <label>Width (cm) <input type="number" min="0" max="10000" step="0.01" @bind="m.Width" @bind:after="Changed" /></label>
+                        <label>Height (cm) <input type="number" min="0" max="10000" step="0.01" @bind="m.Height" @bind:after="Changed" /></label>
+                        <label>Measurement <select @bind="m.WeightUnit" @bind:after="Changed">@foreach (var u in Quote.Units) { <option>@u</option> }</select></label>
+                        <label>Package weight <input type="number" min="0" max="100000" step="0.01" @bind="m.Weight" @bind:after="Changed" /></label>
+                        <label>Package size <select @bind="m.Size" @bind:after="Changed">@foreach (var size in Quote.SizePrices.Keys) { <option>@size</option> }</select></label>
+                        <label>Number of packages <input type="number" min="0" max="15" step="1" @bind="m.Count" @bind:after="Changed" /></label>
+                    </div>
+                </fieldset>
+                <div class="pair">
+                    <fieldset>
+                        <legend>Customer Details</legend>
+                        <label>Title <select @bind="m.CustomerTitle" @bind:after="Changed">@foreach (var t in Titles) { <option>@t</option> }</select></label>
+                        <label>First name <input maxlength="160" @bind="m.FirstName" @bind:after="Changed" /></label>
+                        <label>Middle name <input maxlength="160" @bind="m.MiddleName" @bind:after="Changed" /></label>
+                        <label>Surname <input maxlength="160" @bind="m.Surname" @bind:after="Changed" /></label>
+                        <label>Phone number <input maxlength="160" type="tel" @bind="m.Phone" @bind:after="Changed" /></label>
+                        <label>Email <input maxlength="160" type="email" @bind="m.Email" @bind:after="Changed" /></label>
+                        <label>Birthday <input type="date" @bind="m.Birthday" @bind:format="yyyy-MM-dd" @bind:after="Changed" /></label>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Delivery Driver</legend>
+                        <label>Title <select @bind="m.DriverTitle" @bind:after="Changed">@foreach (var t in Titles) { <option>@t</option> }</select></label>
+                        <label>First name <input maxlength="160" @bind="m.DriverFirst" @bind:after="Changed" /></label>
+                        <label>Middle name <input maxlength="160" @bind="m.DriverMiddle" @bind:after="Changed" /></label>
+                        <label>Surname <input maxlength="160" @bind="m.DriverSurname" @bind:after="Changed" /></label>
+                        <label>Phone number <input maxlength="160" type="tel" @bind="m.DriverPhone" @bind:after="Changed" /></label>
+                        <label>Email <input maxlength="160" type="email" @bind="m.DriverEmail" @bind:after="Changed" /></label>
+                    </fieldset>
+                </div>
+                <fieldset>
+                    <legend>Controls</legend>
+                    <div class="actions">
+                        <button class="red" @onclick="Restore">Restore</button>
+                        <button class="red" @onclick="Clear">Clear</button>
+                        <button class="red" @onclick="Generate">EOS Invoice</button>
+                        <button class="cyan" aria-expanded="@showHelp" @onclick="() => showHelp = !showHelp">Help</button>
+                        <button class="black" @onclick="AutoFill">Auto Fill (for testing)</button>
+                        <button class="red" @onclick="SignOut">Sign out</button>
+                    </div>
+                    @if (showHelp)
+                    {
+                        <ol class="help">
+                            <li>Enter customer, driver, package and delivery details.</li>
+                            <li>Select all applicable categories and a size.</li>
+                            <li>Enter any extra shipping charge. Include any weight, route or insurance fees here.</li>
+                            <li>Enter 'discount' for 20% off.</li>
+                            <li>Select EOS Invoice, then save or print it.</li>
+                        </ol>
+                        <p class="help">Clear saves a temporary snapshot for Restore. Auto Fill uses fictional test details. Nothing is uploaded or saved automatically. Weight must be entered manually. Insurance is recorded only. Currency changes only the displayed symbol.</p>
+                    }
+                </fieldset>
+            </div>
+
+            <fieldset class="delivery">
+                <legend>Delivery Details</legend>
+                <label>Date shipped <input type="date" @bind="m.Shipped" @bind:format="yyyy-MM-dd" @bind:after="Changed" /></label>
+                <label>Expected delivery <input type="date" @bind="m.Expected" @bind:format="yyyy-MM-dd" @bind:after="Changed" /></label>
+                <label>Days until delivered <output>@Quote.Days(Current)</output></label>
+                <label>Next dispatch +7d <output>@m.Shipped.AddDays(7).ToString("dd MMM yyyy")</output></label>
+                <label>Then +14d <output>@m.Shipped.AddDays(14).ToString("dd MMM yyyy")</output></label>
+                <label>Then +21d <output>@m.Shipped.AddDays(21).ToString("dd MMM yyyy")</output></label>
+                <label>Country to <select @bind="m.CountryTo" @bind:after="Changed">@foreach (var c in Countries) { <option>@c</option> }</select></label>
+                <label>Street address <input maxlength="160" @bind="m.Street" @bind:after="Changed" /></label>
+                <label>Street address 2 <input maxlength="160" @bind="m.Street2" @bind:after="Changed" /></label>
+                <label>City <input maxlength="160" @bind="m.City" @bind:after="Changed" /></label>
+                <label>State / province <input maxlength="160" @bind="m.Region" @bind:after="Changed" /></label>
+                <label>Post / zip code <input maxlength="160" @bind="m.Postcode" @bind:after="Changed" /></label>
+                <label>Country from <select @bind="m.CountryFrom" @bind:after="Changed">@foreach (var c in Countries) { <option>@c</option> }</select></label>
+                <label>Delivery type <output>@Quote.DeliveryType(Current)</output></label>
+                <label>Special request <input maxlength="160" @bind="m.Request" @bind:after="Changed" /></label>
+                <label>Insurance (record only) <select @bind="m.Insurance" @bind:after="Changed">@foreach (var i in Insurances) { <option>@i</option> }</select></label>
+                <label>Currency (symbol only) <select @bind="m.Currency" @bind:after="Changed">@foreach (var c in Quote.Currencies) { <option>@c</option> }</select></label>
+                <label>Extra shipping charge <input type="number" min="0" max="100" step="0.01" @bind="m.AdditionalCharge" @bind:after="Changed" /></label>
+                <label>Discount code <input maxlength="160" @bind="m.DiscountCode" @bind:after="Changed" /></label>
+                <label>VAT (demo 20%) <output>@vat</output></label>
+                <label>Total cost <output>@total</output></label>
+                <label class="check"><input type="checkbox" @bind="m.SignedFor" @bind:after="Changed" /> Signed for (+40)</label>
+                <p class="note">Enter additional weight, route or insurance charges in the extra shipping field.</p>
+            </fieldset>
+
+            <section class="invoice" aria-labelledby="invoice-heading">
+                <h2 id="invoice-heading">Invoice</h2>
+                <pre id="invoice" tabindex="0" aria-live="polite" aria-label="Invoice text">@invoice</pre>
+                <div class="actions">
+                    <button class="red" @onclick="Print">Print</button>
+                    <button class="red" @onclick="Save">Save invoice</button>
+                </div>
+            </section>
+        </div>
+        <p class="status" role="status">@status</p>
+    </main>
+}
+
+@code {
+    static readonly string[] Titles = ["Mr", "Mrs", "Ms", "Mx"];
+    static readonly string[] Countries = ["Ireland", "England", "Wales", "Scotland", "Northern Ireland"];
+    static readonly string[] Insurances = ["1st Class", "2nd Class", "None"];
+    const string Ready = "Ready. Use Auto Fill to try the sample details, then EOS Invoice. Currency changes the symbol only.";
+
+    readonly DemoLogin login = new();
+    bool signedIn, showPassword, showHelp;
+    string username = "", password = "", loginMessage = "";
+    FormModel m = FormModel.From(new Shipment());
+    FormModel? previous;
+    string previousInvoice = "", invoice = "", vat = "", total = "", status = Ready;
+
+    Shipment Current => m.ToShipment();
+
+    void FillDemoLogin() { username = "JamieP"; password = "password123"; }
+
+    void SignIn()
+    {
+        if (login.TryLogin(username, password, DateTime.Now)) { signedIn = true; loginMessage = ""; password = ""; return; }
+        // The same messages as the Windows login form.
+        loginMessage = DateTime.Now < login.LockedUntil ? "Too many attempts. Wait 30 seconds." : $"Invalid details. Attempts remaining: {3 - login.Attempts}";
+    }
+
+    void SignOut() { signedIn = false; m = FormModel.From(new Shipment()); previous = null; previousInvoice = ""; Changed(); }
+
+    void ToggleCategory(string name, ChangeEventArgs e)
+    {
+        if (e.Value is true) m.Categories.Add(name); else m.Categories.Remove(name);
+        Changed();
+    }
+
+    /// <summary>Any edit makes the displayed invoice out of date, as in the Windows app.</summary>
+    void Changed() { invoice = ""; vat = ""; total = ""; status = Ready; }
+
+    bool TryGenerate()
+    {
+        var s = Current;
+        var errors = Quote.Validate(s, DateTime.Today);
+        if (errors.Length > 0) { status = errors[0]; invoice = "PLEASE CHECK\n\n" + string.Join("\n", errors); return false; }
+        var q = Quote.Calculate(s, DateTime.Today);
+        invoice = Quote.Invoice(s, q); vat = q.Vat.ToString("F2"); total = q.Total.ToString("F2");
+        status = q.Discount > 0 ? "Invoice ready. 20% discount applied." : "Invoice ready. No discount applied.";
+        return true;
+    }
+
+    void Generate() => TryGenerate();
+    void AutoFill() { m = FormModel.From(Shipment.Example); Changed(); }
+
+    void Clear()
+    {
+        previous = m; previousInvoice = invoice;
+        m = FormModel.From(new Shipment()); Changed();
+        status = "Form cleared. Restore brings back the previous entries.";
+    }
+
+    void Restore()
+    {
+        if (previous == null) { status = "There is no cleared form to restore."; return; }
+        m = previous; Changed();
+        if (previousInvoice.Length > 0 && !previousInvoice.StartsWith("PLEASE CHECK")) TryGenerate();
+        status = "Previous form restored.";
+    }
+
+    async Task Save() { if (TryGenerate()) await JS.InvokeVoidAsync("eos.download", "EOS-invoice.txt", invoice); }
+    async Task Print() { if (TryGenerate()) { StateHasChanged(); await Task.Yield(); await JS.InvokeVoidAsync("eos.print"); } }
+}

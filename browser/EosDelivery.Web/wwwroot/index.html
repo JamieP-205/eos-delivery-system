@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EOS Delivery System (browser version)</title>
+    <meta name="description" content="Browser version of the EOS delivery quotation and invoice app, running its original C# calculation code in WebAssembly." />
+    <base href="/" />
+    <link rel="preload" id="webassembly" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23b3141c%22/%3E%3Ctext x=%2216%22 y=%2222%22 font-size=%2214%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22%3EEOS%3C/text%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="css/app.css" />
+    <script type="importmap"></script>
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div id="app">
+        <p class="loading" role="status">Loading the EOS app (about 3 MB the first time)…</p>
+    </div>
+    <noscript><p class="loading">This browser version needs JavaScript and WebAssembly. You can <a href="https://github.com/JamieP-205/eos-delivery-system/releases/latest">download the Windows app</a> instead.</p></noscript>
+    <div id="blazor-error-ui" role="alert">
+        Something went wrong. <a href="." class="reload">Reload the page</a>
+    </div>
+    <script>
+        window.eos = {
+            download: function (name, text) {
+                const url = URL.createObjectURL(new Blob([text.replace(/\r?\n/g, "\r\n")], { type: "text/plain;charset=utf-8" }));
+                const a = document.createElement("a");
+                a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            },
+            print: function () { window.print(); }
+        };
+    </script>
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+</body>
+</html>

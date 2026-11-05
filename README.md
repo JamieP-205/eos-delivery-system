@@ -8,7 +8,9 @@ A C# Windows Forms app for delivery quotes and invoices, based on my EOS coursew
 
 ## Try it
 
-Download **EosDelivery-windows-x64.zip** from [Releases](https://github.com/JamieP-205/eos-delivery-system/releases/latest), extract it and run `EosDelivery.exe`. The Windows x64 release includes its .NET runtime.
+**In your browser:** [open the browser version](https://jamiep-205.github.io/eos-delivery-system/browser/). It runs this app's own calculation code (`Quote.cs`) in WebAssembly, with a web form instead of the Windows one ([how it was built and checked](docs/browser-version.md)). Log in with the details shown on the page.
+
+**On Windows:** download **EosDelivery-windows-x64.zip** from [Releases](https://github.com/JamieP-205/eos-delivery-system/releases/latest), extract it and run `EosDelivery.exe`. The Windows x64 release includes its .NET runtime.
 
 Demo login: **JamieP** / **password123**. Select **Auto Fill (for testing)**, then **EOS Invoice**. Use `discount` for 20% off. Clear and restore the form, save an invoice, or open print preview.
 

@@ -8,4 +8,11 @@
     <AssemblyName>EosDelivery</AssemblyName>
     <ApplicationHighDpiMode>DpiUnaware</ApplicationHighDpiMode>
   </PropertyGroup>
+  <ItemGroup>
+    <!-- The browser version has its own project; keep its files out of the Windows build. -->
+    <Compile Remove="browser/**" />
+    <None Remove="browser/**" />
+    <Content Remove="browser/**" />
+    <EmbeddedResource Remove="browser/**" />
+  </ItemGroup>
 </Project>
