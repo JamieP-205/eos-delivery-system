@@ -19,6 +19,7 @@ internal static class Verification
         Check(Quote.Validate(s with { Weight = 100001, WeightUnit = "g" }, now).Length > 0, "Weight limit applies after unit conversion");
         Check(Quote.Validate(s with { Count = 0 }, now).Length > 0 && Quote.Validate(s with { Count = 16 }, now).Length > 0, "Package count boundaries enforced");
         Check(Quote.Validate(s with { Count = 15 }, now).Length == 0, "15 package boundary accepted");
+        Check(Quote.Validate(s with { Length = 10001 }, now).Length > 0 && Quote.Validate(s with { Height = 99999999 }, now).Length > 0 && Quote.Validate(s with { Length = 10000, Width = 10000, Height = 10000 }, now).Length == 0, "Package dimension limit of 10,000 cm enforced");
         Check(Quote.Validate(s with { Expected = s.Shipped.AddDays(-1) }, now).Length > 0, "Reversed dates rejected");
         Check(Quote.Validate(s with { Birthday = now.AddYears(-18).AddDays(1) }, now).Length > 0, "Under-18 customer rejected");
         Check(Quote.Validate(s with { Birthday = now.AddYears(-18) }, now).Length == 0, "18th birthday accepted");

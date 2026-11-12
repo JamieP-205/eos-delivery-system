@@ -1,5 +1,5 @@
 {
-  "passed": 25,
+  "passed": 26,
   "checks": [
     "Category, size, package and shipping charges reconcile with VAT and discount",
     "Unknown discount is not applied",
@@ -10,6 +10,7 @@
     "Weight limit applies after unit conversion",
     "Package count boundaries enforced",
     "15 package boundary accepted",
+    "Package dimension limit of 10,000 cm enforced",
     "Reversed dates rejected",
     "Under-18 customer rejected",
     "18th birthday accepted",

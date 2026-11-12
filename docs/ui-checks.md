@@ -11,4 +11,4 @@ Checked on 4 November 2026 using the Windows x64 application at the laptop's dis
 - Re-entering the name permits invoice generation again.
 - Print preview shows the complete sample invoice on one page. No printer job was submitted.
 
-The automated suite also checks the package layout in full-size and smaller windows, alongside calculation and validation cases. All 25 checks pass.
+The automated suite also checks the package layout in full-size and smaller windows, alongside calculation and validation cases. All 26 checks pass.

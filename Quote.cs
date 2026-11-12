@@ -88,7 +88,7 @@ public static class Quote
         if (s.Birthday.Date > today.Date.AddYears(-18)) errors.Add("The customer must be at least 18.");
         if (s.Count is < 1 or > 15) errors.Add("Enter between 1 and 15 packages.");
         if (!Units.Contains(s.WeightUnit) || Kg(s) <= 0 || Kg(s) > 100) errors.Add("Enter a package weight above zero and at most 100 kg (or equivalent).");
-        if (s.Length <= 0 || s.Width <= 0 || s.Height <= 0) errors.Add("Enter positive package dimensions in centimetres.");
+        if (s.Length is <= 0 or > 10000 || s.Width is <= 0 or > 10000 || s.Height is <= 0 or > 10000) errors.Add("Enter package dimensions above zero and at most 10,000 centimetres.");
         if (!SizePrices.ContainsKey(s.Size)) errors.Add("Choose Small, Medium or Large.");
         if (s.Categories.Any(c => !CategoryPrices.ContainsKey(c))) errors.Add("Choose a recognised package category.");
         if (Days(s) < 0) errors.Add("Expected delivery cannot be before dispatch.");
