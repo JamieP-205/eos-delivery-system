@@ -109,6 +109,7 @@ public static class Quote
         decimal discount = s.DiscountCode.Trim().Equals("discount", StringComparison.OrdinalIgnoreCase) ? Money((subtotal + vat) * .20m) : 0;
         return new(lines.ToArray(), subtotal, vat, discount, Money(subtotal + vat - discount));
     }
+    public static bool IsBlank(Shipment s) { var blank = new Shipment(); return s.Categories.Length == 0 && s with { Categories = blank.Categories } == blank; }
     static decimal Money(decimal value) => decimal.Round(value, 2, MidpointRounding.AwayFromZero);
     public static string Invoice(Shipment s, QuoteResult q)
     {

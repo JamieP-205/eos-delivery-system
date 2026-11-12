@@ -32,6 +32,7 @@ internal static class Verification
         using var form = new DeliveryForm(); form.Set(s); Check(form.TryGenerate(), "Valid form generates invoice");
         string before = form.InvoiceText; form.Clear(); Check(form.Read().FirstName == "" && form.InvoiceText == "", "Clear removes entries and invoice");
         form.Restore(); Check(form.Read().FirstName == s.FirstName && form.InvoiceText == before, "Restore recovers entries and invoice");
+        form.Clear(); form.Clear(); form.Restore(); Check(form.Read().FirstName == s.FirstName && form.InvoiceText == before, "Clearing an empty form keeps the Restore snapshot");
         form.Set(s with { FirstName = "Changed" }); Check(form.InvoiceText == "", "Editing invalidates stale invoice");
         form.Set(s); form.TryGenerate(); form.ClientSize = new(1480, 890); form.Opacity = 0; form.Show(); form.PerformLayout(); Application.DoEvents();
         Check(form.PackageInputsAreVisible(), "Package controls remain visible without overlapping category panel");

@@ -188,7 +188,7 @@ else
 
     void Clear()
     {
-        previous = m; previousInvoice = invoice;
+        if (!Quote.IsBlank(m.ToShipment())) { previous = m; previousInvoice = invoice; }
         m = FormModel.From(new Shipment()); Changed();
         status = "Form cleared. Restore brings back the previous entries.";
     }

@@ -176,7 +176,7 @@ public sealed class DeliveryForm : Form
         status.Text = q.Discount > 0 ? "Invoice ready. 20% discount applied." : "Invoice ready. No discount applied."; return true;
     }
     void Generate() => TryGenerate();
-    public void Clear() { previous = Read(); previousInvoice = invoice.Text; Set(new Shipment()); status.Text = "Form cleared. Restore brings back the previous entries."; }
+    public void Clear() { if (!Quote.IsBlank(Read())) { previous = Read(); previousInvoice = invoice.Text; } Set(new Shipment()); status.Text = "Form cleared. Restore brings back the previous entries."; }
     public void Restore() { if (previous == null) { status.Text = "There is no cleared form to restore."; return; } Set(previous); if (previousInvoice.Length > 0 && !previousInvoice.StartsWith("PLEASE CHECK")) TryGenerate(); status.Text = "Previous form restored."; }
     void Help() => MessageBox.Show("1. Enter customer, driver, package and delivery details.\n2. Select all applicable categories and a size.\n3. Enter any extra shipping charge. Include any weight, route or insurance fees here.\n4. Enter 'discount' for 20% off.\n5. Select EOS Invoice, then save or preview/print it.\n\nClear saves a temporary snapshot for Restore. Auto Fill uses fictional test details. Nothing is uploaded or saved automatically. Weight must be entered manually. Insurance is recorded only. Currency changes only the displayed symbol.", "EOS help");
     void SaveInvoice() { if (!TryGenerate()) return; using var dialog = new SaveFileDialog { Filter = "Text invoice|*.txt", FileName = "EOS-invoice.txt" }; if (dialog.ShowDialog() == DialogResult.OK) File.WriteAllText(dialog.FileName, invoice.Text); }

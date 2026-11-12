@@ -1,5 +1,5 @@
 {
-  "passed": 24,
+  "passed": 25,
   "checks": [
     "Category, size, package and shipping charges reconcile with VAT and discount",
     "Unknown discount is not applied",
@@ -22,6 +22,7 @@
     "Valid form generates invoice",
     "Clear removes entries and invoice",
     "Restore recovers entries and invoice",
+    "Clearing an empty form keeps the Restore snapshot",
     "Editing invalidates stale invoice",
     "Package controls remain visible without overlapping category panel",
     "Package controls remain unclipped in smaller window"
